@@ -13,3 +13,7 @@ Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app w
 Run `cd functions` then `npm i` then
 
 Run `npm run server`.
+
+Use `rohan@demo.com` as email and `123456` as password for login or create a new user and login with them.
+
+Thanks.
