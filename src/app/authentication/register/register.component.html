@@ -13,17 +13,83 @@
                     class="form-group"
                     [ngClass]="{
                       'has-error':
+                        !profileForm.controls['firstname'].valid &&
+                        profileForm.controls['firstname'].touched
+                    }"
+                  >
+                    <label>Firstname:</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      formControlName="firstname"
+                      placeholder="Firstname"
+                      autocomplete="firstname"
+                      required
+                    />
+                    <div
+                      *ngIf="
+                        profileForm.controls['firstname'].errors &&
+                        profileForm.controls['firstname'].touched
+                      "
+                    >
+                      <div
+                        *ngIf="
+                          profileForm.controls['firstname'].hasError('required')
+                        "
+                      >
+                        Firstname is required
+                      </div>
+                    </div>
+                  </div>
+                  <br />
+                  <div
+                    class="form-group"
+                    [ngClass]="{
+                      'has-error':
+                        !profileForm.controls['lastname'].valid &&
+                        profileForm.controls['lastname'].touched
+                    }"
+                  >
+                    <label>Lastname:</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      formControlName="lastname"
+                      placeholder="Lastname"
+                      autocomplete="lastname"
+                      required
+                    />
+                    <div
+                      *ngIf="
+                        profileForm.controls['lastname'].errors &&
+                        profileForm.controls['lastname'].touched
+                      "
+                    >
+                      <div
+                        *ngIf="
+                          profileForm.controls['lastname'].hasError('required')
+                        "
+                      >
+                        Lastname is required
+                      </div>
+                    </div>
+                  </div>
+                  <br />
+                  <div
+                    class="form-group"
+                    [ngClass]="{
+                      'has-error':
                         !profileForm.controls['email'].valid &&
                         profileForm.controls['email'].touched
                     }"
                   >
                     <label>Email:</label>
                     <input
-                      type="text"
+                      type="email"
                       class="form-control"
                       formControlName="email"
                       placeholder="Email"
-                      autocomplete="username"
+                      autocomplete="email"
                       required
                     />
                     <div
@@ -120,6 +186,9 @@
                         Confirm Password is required
                       </div>
                     </div>
+                  </div>
+                  <div class="has-error" *ngIf="showError">
+                    Password and Confirm password are not same.
                   </div>
                   <br />
                   <div class="row">

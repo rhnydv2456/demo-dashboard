@@ -13,6 +13,7 @@ const routes: Routes = [
   },
   {
     path: 'core',
+    canActivate: [AuthenticationGuard],
     loadChildren: () =>
       import('./components/components.module').then((m) => m.ComponentsModule),
   },

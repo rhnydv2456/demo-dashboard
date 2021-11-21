@@ -1,3 +1,6 @@
 <app-topnav></app-topnav>
+<h1 style="font-size: 20px" *ngIf="user">
+  Welcome {{ user?.firstname }} {{ user?.lastname }}({{ user?.emailAddress }}),
+</h1>
 <app-data-table></app-data-table>
 <app-data-chart></app-data-chart>

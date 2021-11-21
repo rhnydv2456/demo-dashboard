@@ -36,7 +36,7 @@ export class AuthenticationService {
         this.toaster.success(
           'User created Successfully.Please login to continue.'
         );
-        this.router.navigate(['/core/dashboard']);
+        this.router.navigate(['/login']);
       },
       (err) => {
         this.toaster.error('User not created.Please register again.');
@@ -77,6 +77,7 @@ export class AuthenticationService {
           this.token = result.token;
           if (result.token) {
             localStorage.setItem('userId', result.userId);
+            localStorage.setItem('user', JSON.stringify(result));
             const expiresInDuration = result.expiresIn;
             this.setAuthTimer(expiresInDuration);
             const date = new Date();

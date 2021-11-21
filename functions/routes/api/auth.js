@@ -64,6 +64,9 @@ router.post(
         },
       };
       const userId = user.id;
+      const firstname = user.firstname;
+      const lastname = user.lastname;
+      const emailAddress = user.email;
       jwt.sign(
         payload,
         config.get("jwtSecret"),
@@ -73,7 +76,14 @@ router.post(
         (err, token) => {
           if (err) throw err;
           const expiresIn = 3600;
-          res.json({ token, expiresIn, userId });
+          res.json({
+            token,
+            expiresIn,
+            userId,
+            firstname,
+            lastname,
+            emailAddress,
+          });
         }
       );
     } catch (err) {

@@ -1,80 +1,87 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const gravatar = require('gravatar');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const config = require('config');
-const auth = require('../../middleware/auth');
-const { check, validationResult } = require('express-validator');
-const User = require('../../models/User');
+const gravatar = require("gravatar");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const config = require("config");
+const auth = require("../../middleware/auth");
+const { check, validationResult } = require("express-validator");
+const User = require("../../models/User");
 
 // @route POST api/users
 // @describe save users
 // @access private
 
-router.post('/', [
-    check('email', 'Please enter valid email address.').isEmail(),
-    check('password', 'Password must be minimum 6 digit.').isLength({ min: 6 })
-], async (req, res) => {
+router.post(
+  "/",
+  [
+    check("firstname", "Please enter firstname.").exists(),
+    check("lastname", "Please enter lastname.").exists(),
+    check("email", "Please enter valid email address.").isEmail(),
+    check("password", "Password must be minimum 6 digit.").isLength({ min: 6 }),
+  ],
+  async (req, res) => {
     const error = validationResult(req);
 
     if (!error.isEmpty()) {
-        return res.status(400).json({ error: error.array() });
+      return res.status(400).json({ error: error.array() });
     }
 
-    const { email, password } = req.body;
+    const { firstname, lastname, email, password } = req.body;
     try {
-        let user = await User.findOne({ email });
-        // user exist
-        if (user) {
-            return res.status(400).json({ error: [{ msg: 'Email already exist!' }] });
-        }
-        const profileFields = {};
-        if (email) profileFields.email = email;
-        
+      let user = await User.findOne({ email });
+      // user exist
+      if (user) {
+        return res
+          .status(400)
+          .json({ error: [{ msg: "Email already exist!" }] });
+      }
+      const profileFields = {};
+      if (email) profileFields.email = email;
+      if (firstname) profileFields.firstname = firstname;
+      if (lastname) profileFields.lastname = lastname;
 
+      // encrypt password
+      const salt = await bcrypt.genSalt(10);
 
-        // encrypt password
-        const salt = await bcrypt.genSalt(10);
+      profileFields.password = await bcrypt.hash(password, salt);
 
-        profileFields.password = await bcrypt.hash(password, salt);
+      let profile = await User.findOne({ email: email });
 
-        let profile = await User.findOne({ email: email });
+      if (profile) {
+        // Update
+        profile = await User.findOneAndUpdate(
+          { email: email },
+          { $set: profileFields },
+          { new: true }
+        );
 
-        if (profile) {
-            // Update
-            profile = await User.findOneAndUpdate(
-                { email: email },
-                { $set: profileFields },
-                { new: true }
-            );
+        return res.json(profile);
+      }
 
-            return res.json(profile);
-        }
+      // creating instance
+      user = new User(profileFields);
 
-        // creating instance
-        user = new User(profileFields);
+      await user.save();
 
-        await user.save();
-
-        res.json({ success: 'Profile created!' });
+      res.json({ success: "Profile created!" });
     } catch (err) {
-        console.error(err.message);
-        res.status(500).send('Server error');
+      console.error(err.message);
+      res.status(500).send("Server error");
     }
-});
+  }
+);
 
 // @route GET api/users
 // @describe return all users
 // @access private
 
-router.get('/', auth, async (req, res) => {
-    User.find()
-        .then((documents) => {
-            return res.status(200).json({
-                message: "users fetched successsfully!",
-                users: documents,
-            });
-        });
+router.get("/", auth, async (req, res) => {
+  User.find().then((documents) => {
+    return res.status(200).json({
+      message: "users fetched successsfully!",
+      users: documents,
+    });
+  });
 });
 module.exports = router;
